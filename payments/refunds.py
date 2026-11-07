@@ -8,7 +8,10 @@ def split_refund(amount: Decimal, installments: int) -> list[Decimal]:
     if installments < 1:
         raise ValueError("installments must be at least 1")
     share = (amount / installments).quantize(CENT, rounding=ROUND_HALF_UP)
-    return [share] * installments
+    shares = [share] * installments
+    remainder = amount - sum(shares, Decimal("0"))
+    shares[-1] += remainder
+    return shares
 
 
 def remaining_refundable(paid: Decimal, refunds: list[Decimal]) -> Decimal:
